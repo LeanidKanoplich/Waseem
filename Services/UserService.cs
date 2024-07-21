@@ -1,6 +1,6 @@
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SolarpayAPI.Data;
 using SolarpayAPI.Dtos;
@@ -82,10 +82,9 @@ namespace SolarpayAPI.Services
             };
         }
 
-        public async Task<ServiceResponse<UserDto>> GetUserByUsernameAsync(string username)
+        public async Task<ServiceResponse<UserDto>> GetUserByIdAsync(int id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return new ServiceResponse<UserDto>
@@ -110,10 +109,9 @@ namespace SolarpayAPI.Services
             };
         }
 
-        public async Task<ServiceResponse<UserDto>> GetUserByIdAsync(int id)
+        public async Task<ServiceResponse<UserDto>> GetUserByUsernameAsync(string username)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user == null)
             {
                 return new ServiceResponse<UserDto>
