@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SolarpayAPI.Dtos;
 using SolarpayAPI.Services;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace SolarpayAPI.Controllers
 {
@@ -38,6 +39,37 @@ namespace SolarpayAPI.Controllers
             return Ok(response);
         }
 
-        // Other CRUD operations...
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var response = await _userService.GetAllUsersAsync();
+            if (!response.Success)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpGet("{username}")]
+        public async Task<IActionResult> GetUserByUsername(string username)
+        {
+            var response = await _userService.GetUserByUsernameAsync(username);
+            if (!response.Success)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, UserUpdateDto request)
+        {
+            var response = await _userService.UpdateUserAsync(id, request);
+            if (!response.Success)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
     }
 }

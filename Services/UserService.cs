@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using SolarpayAPI.Data;
 using SolarpayAPI.Dtos;
 using SolarpayAPI.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SolarpayAPI.Services
 {
@@ -37,7 +39,7 @@ namespace SolarpayAPI.Services
 
         public async Task<ServiceResponse<UserLoginDto>> LoginAsync(UserLoginDto request)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == request.Username && u.Password == request.Password);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username && u.Password == request.Password);
 
             if (user == null)
             {
@@ -59,6 +61,78 @@ namespace SolarpayAPI.Services
                 Data = userDto,
                 Success = true,
                 Message = "User logged in successfully"
+            };
+        }
+
+        public async Task<ServiceResponse<List<UserDto>>> GetAllUsersAsync()
+        {
+            var users = await _context.Users.ToListAsync();
+            var userDtos = users.Select(u => new UserDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Email = u.Email
+            }).ToList();
+
+            return new ServiceResponse<List<UserDto>>
+            {
+                Data = userDtos,
+                Success = true,
+                Message = "Users retrieved successfully"
+            };
+        }
+
+        public async Task<ServiceResponse<UserDto>> GetUserByUsernameAsync(string username)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+            if (user == null)
+            {
+                return new ServiceResponse<UserDto>
+                {
+                    Success = false,
+                    Message = "User not found"
+                };
+            }
+
+            var userDto = new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email
+            };
+
+            return new ServiceResponse<UserDto>
+            {
+                Data = userDto,
+                Success = true,
+                Message = "User retrieved successfully"
+            };
+        }
+
+        public async Task<ServiceResponse<UserUpdateDto>> UpdateUserAsync(int id, UserUpdateDto request)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return new ServiceResponse<UserUpdateDto>
+                {
+                    Success = false,
+                    Message = "User not found"
+                };
+            }
+
+            user.Username = request.Username;
+            user.Email = request.Email;
+            // Обновление других полей
+
+            await _context.SaveChangesAsync();
+
+            return new ServiceResponse<UserUpdateDto>
+            {
+                Data = request,
+                Success = true,
+                Message = "User updated successfully"
             };
         }
     }
