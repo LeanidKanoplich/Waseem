@@ -1,6 +1,6 @@
-using SolarpayAPI.Dtos;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using SolarpayAPI.Dtos;
 
 namespace SolarpayAPI.Services
 {
@@ -10,6 +10,8 @@ namespace SolarpayAPI.Services
         Task<ServiceResponse<UserLoginDto>> LoginAsync(UserLoginDto request);
         Task<ServiceResponse<List<UserDto>>> GetAllUsersAsync();
         Task<ServiceResponse<UserDto>> GetUserByUsernameAsync(string username);
+        Task<ServiceResponse<UserDto>> GetUserByIdAsync(int id);
         Task<ServiceResponse<UserUpdateDto>> UpdateUserAsync(int id, UserUpdateDto request);
+        Task<ServiceResponse<bool>> DeleteUserAsync(int id);
     }
 }

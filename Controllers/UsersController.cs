@@ -50,16 +50,17 @@ namespace SolarpayAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{username}")]
-        public async Task<IActionResult> GetUserByUsername(string username)
-        {
-            var response = await _userService.GetUserByUsernameAsync(username);
-            if (!response.Success)
-            {
-                return NotFound(response);
-            }
-            return Ok(response);
-        }
+        [HttpGet("username/{username}")]
+public async Task<IActionResult> GetUserByUsername(string username)
+{
+    var response = await _userService.GetUserByUsernameAsync(username);
+    if (!response.Success)
+    {
+        return NotFound(response);
+    }
+    return Ok(response);
+}
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UserUpdateDto request)

@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SolarpayAPI.Data;
 using SolarpayAPI.Dtos;
 using SolarpayAPI.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SolarpayAPI.Services
 {
@@ -110,6 +110,34 @@ namespace SolarpayAPI.Services
             };
         }
 
+        public async Task<ServiceResponse<UserDto>> GetUserByIdAsync(int id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return new ServiceResponse<UserDto>
+                {
+                    Success = false,
+                    Message = "User not found"
+                };
+            }
+
+            var userDto = new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email
+            };
+
+            return new ServiceResponse<UserDto>
+            {
+                Data = userDto,
+                Success = true,
+                Message = "User retrieved successfully"
+            };
+        }
+
         public async Task<ServiceResponse<UserUpdateDto>> UpdateUserAsync(int id, UserUpdateDto request)
         {
             var user = await _context.Users.FindAsync(id);
@@ -124,7 +152,6 @@ namespace SolarpayAPI.Services
 
             user.Username = request.Username;
             user.Email = request.Email;
-            // Обновление других полей
 
             await _context.SaveChangesAsync();
 
@@ -133,6 +160,29 @@ namespace SolarpayAPI.Services
                 Data = request,
                 Success = true,
                 Message = "User updated successfully"
+            };
+        }
+
+        public async Task<ServiceResponse<bool>> DeleteUserAsync(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = "User not found"
+                };
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return new ServiceResponse<bool>
+            {
+                Data = true,
+                Success = true,
+                Message = "User deleted successfully"
             };
         }
     }
